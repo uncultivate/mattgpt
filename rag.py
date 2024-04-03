@@ -118,12 +118,15 @@ class ChatPDF:
         else:
             try:
                 self.vector_store.add_documents(documents=chunks)
+                
             except Exception as e:
                 logging.error(f"Failed to add documents to vector store: {e}")
                 return
 
         # Setup retriever and processing chains if not already done
         if self.retriever is None:
+            logging.info(f"Number of docs: {len(docs)}")
+
             try:
                 self.retriever = self.vector_store.as_retriever(
                     search_type="similarity_score_threshold",

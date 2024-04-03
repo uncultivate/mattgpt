@@ -18,7 +18,6 @@ if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "qa" 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = {}
-st.write(st.session_state['active_tab'])
 
 def reset_application():
     # Clear the ChatPDF instance
