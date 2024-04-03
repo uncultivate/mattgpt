@@ -37,6 +37,8 @@ def display_messages(tab):
 
 
 def process_input(tab_identifier):
+    st.session_state['active_tab'] = tab_identifier  # Update the active tab based on the input source
+
     # Retrieve the user input based on the tab_identifier
     input_key = "user_input_qa" if tab_identifier == "qa" else "user_input_category_search"
     user_input = st.session_state.get(input_key, "")
@@ -68,7 +70,6 @@ def process_input(tab_identifier):
         # Optionally, clear the input field after processing
         st.session_state[input_key] = ""
         
-        st.session_state['active_tab'] = tab_identifier  # Update the active tab based on the input source
 
 
 
