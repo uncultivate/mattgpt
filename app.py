@@ -105,7 +105,7 @@ def page():
     st.file_uploader("Upload document", type=["pdf"], key="file_uploader", on_change=read_and_save_file, label_visibility="collapsed", accept_multiple_files=True)
 
     # Version and reset
-    st.sidebar.image('cq.webp', width=200)
+    st.sidebar.image('cq.webp', width=500)
     st.sidebar.subheader('Version: 0.12')
     if st.sidebar.button("Clear Chat"):
         reset_application()
