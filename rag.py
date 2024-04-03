@@ -127,7 +127,7 @@ class ChatPDF:
             try:
                 self.retriever = self.vector_store.as_retriever(
                     search_type="similarity_score_threshold",
-                    search_kwargs={"k": 3, "score_threshold": 0.5},
+                    search_kwargs={"k": 3, "score_threshold": 0.8},
                 )
 
                 # Since the prompt templates are now dynamic, ensure chains are set up correctly here
