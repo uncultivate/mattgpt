@@ -100,7 +100,7 @@ def page():
 
     col1, col2 = st.columns(2)
     col1.header("Contract Query")
-    col2.image('cq.webp')
+    col2.image('cq.webp', width=100)
 
     # Upload document section
     st.subheader("Upload a document")
