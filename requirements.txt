@@ -6,3 +6,4 @@ langchain
 pypdf
 fastembed
 chromadb
+sqlite3
