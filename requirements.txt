@@ -4,3 +4,4 @@ langchain_groq
 langchain_community
 langchain
 pypdf
+fastembed
