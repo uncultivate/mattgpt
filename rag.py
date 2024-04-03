@@ -18,6 +18,10 @@ from langchain.prompts import PromptTemplate
 from langchain_community.vectorstores.utils import filter_complex_metadata
 from langchain.retrievers.document_compressors import EmbeddingsFilter
 from langchain.retrievers import ContextualCompressionRetriever
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import sqlite3
 
 GROQ_API_KEY= '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'
 
