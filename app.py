@@ -98,8 +98,9 @@ def page():
     if "active_tab" not in st.session_state:
         st.session_state["active_tab"] = "qa"  # Default to the Q & A tab
 
-    st.header("Contract Query")
-    st.image('cq.webp')
+    col1, col2 = st.columns(2)
+    col1.header("Contract Query")
+    col2.image('cq.webp')
 
     # Upload document section
     st.subheader("Upload a document")
