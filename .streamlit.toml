@@ -1,0 +1,6 @@
+[theme]
+primaryColor="#2E91E5"  # A pleasant shade of blue for primary elements
+backgroundColor="#EAF4F4"  # A soft, light blue-green background
+secondaryBackgroundColor="#A7DADF"  # A secondary background with a slightly darker blue-green
+textColor="#333333"  # Dark grey for text, ensuring good readability
+font="monospace"  # A monospace font for a modern, digital look
