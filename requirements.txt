@@ -1,1 +1,2 @@
-streamlit-chat
+streamlit_chat
+langchain_core
