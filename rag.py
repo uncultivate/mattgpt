@@ -27,8 +27,6 @@ GROQ_API_KEY= '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'
 #chat = ChatGroq(temperature=0, groq_api_key="YOUR_API_KEY", model_name="mixtral-8x7b-32768")
 
 
-API_KEY = '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'
-
 # Configure basic logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',

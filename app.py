@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-st.set_page_config(page_title="MattGPT")
+st.set_page_config(page_title="CQ")
 
 if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "qa" 
@@ -98,7 +98,8 @@ def page():
     if "active_tab" not in st.session_state:
         st.session_state["active_tab"] = "qa"  # Default to the Q & A tab
 
-    st.header("MattGPT")
+    st.header("Contract Query")
+    st.image('cq.webp')
 
     # Upload document section
     st.subheader("Upload a document")
