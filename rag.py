@@ -122,7 +122,7 @@ class ChatPDF:
             except Exception as e:
                 logging.error(f"Failed to add documents to vector store: {e}")
                 return
-        logging.info(f"Number of docs: {len(docs)}")
+
         # Setup retriever and processing chains if not already done
         if self.retriever is None:
 
