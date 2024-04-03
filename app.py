@@ -96,6 +96,7 @@ def page():
     if "assistant" not in st.session_state:
         st.session_state["assistant"] = ChatPDF()
     if "active_tab" not in st.session_state:
+        st.write('back to qa!')
         st.session_state["active_tab"] = "qa"  # Default to the Q & A tab
 
     st.header("Contract Query")
