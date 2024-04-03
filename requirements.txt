@@ -1,3 +1,5 @@
 streamlit_chat
 langchain_core
 langchain_groq
+langchain_community
+langchain
