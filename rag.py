@@ -53,8 +53,8 @@ class ChatPDF:
             "category_search": PromptTemplate.from_template(
                 """
                 <s> [INST] You are an assistant for document review tasks, specialising in contracts. Use the following retrieved context
-                to provide a response. If you can't find information on the {question} category, just say so.
-                Otherwise, upon reviewing the provided context, concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting:
+                to provide a response. If you can't find information on the {question} category, just say so and conclude the response.
+                If you find relevant information on the {question} category, concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting:
 
                 Summary of {question} Category
                 Begin with a Summary section focused on the {question} category. Provide an accurate summary of the key points and objectives covered under this category, including the significance of these elements to the overall contract.
