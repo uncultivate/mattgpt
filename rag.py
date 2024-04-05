@@ -22,7 +22,7 @@ __import__('pysqlite3')
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-GROQ_API_KEY= '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'
+#GROQ_API_KEY= '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'
 
 #chat = ChatGroq(temperature=0, groq_api_key="YOUR_API_KEY", model_name="mixtral-8x7b-32768")
 
@@ -42,31 +42,24 @@ class ChatPDF:
 
     def __init__(self):
         # self.model = ChatOllama(model="mistral")
-        self.model = ChatGroq(temperature=0.5, groq_api_key="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", model_name="mixtral-8x7b-32768")
+        self.model = ChatGroq(temperature=0.5, groq_api_key=GROQ_API_KEY, model_name="mixtral-8x7b-32768")
 
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
         self.prompts = {
             "qa": PromptTemplate.from_template(
                 """
                 <s> [INST] You are an assistant for question-answering tasks, specializing in contract review. Use the following pieces of retrieved context
-                to answer the question. If you don't know the answer, say so. Use three sentences maximum and keep the answer concise. [/INST] </s>
+                to answer the question. If you don't know the answer, just say so. Use three sentences maximum and keep the answer concise. [/INST] </s>
                 [INST] Question: {question}
                 Context: {context}
                 Answer: [/INST]
                 """
             ),
             "category_search": PromptTemplate.from_template(
-                # """
-                # <s> [INST] Review the provided contract document thoroughly to identify and extract all terms, clauses, and appendices related to the specified category: {question}. Summarize these sections accurately, including direct quotations and precise references (section numbers, titles, page numbers) where applicable, using the following format:
-                # * Summary
-                # * References to relevant clauses and 1-2 sentence description of each
-                # * Supplementary information 
-                # [/INST] </s>
-                # Context: {context}
-                # Answer: [/INST]
-                # """
                 """
-                Upon reviewing the provided contract document, concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting:
+                <s> [INST] You are an assistant for document review tasks, specialising in contracts. Use the following retrieved context
+                to provide a response. If you can't find information on the {question} category, just say so.
+                Otherwise, upon reviewing the provided context, concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting:
 
                 Summary of {question} Category
                 Begin with a Summary section focused on the {question} category. Provide an accurate summary of the key points and objectives covered under this category, including the significance of these elements to the overall contract.
@@ -75,12 +68,11 @@ class ChatPDF:
                 List and Describe Relevant Terms and Clauses: Identify each term and clause related to the {question} category. Use bullet points for each term or clause, including direct quotations and precise references such as section numbers, titles, and page numbers where applicable.
 
                 Example:
-
                 Clause 4.3 - Termination Rights (Page 7): "Either party may terminate this agreement with a 30-day written notice if..."
                 Appendices Related to {question}: Identify any appendices that are directly relevant to the {question} category. Provide titles and page numbers, along with a brief description of the content and its relevance.
 
                 Direct Quotations and References
-                Throughout the analysis, incorporate Direct Quotations from the contract to support your summaries and descriptions. Ensure these quotations are precise and include exact references to their location in the document (e.g., "As stated in Section 2.1 (Page 3), '...'" ).
+                Throughout the analysis, incorporate Direct Quotations from the contract to support your summaries and descriptions. Ensure these quotations are precise and include exact references to their location in the document (e.g., "As stated in Section 2.1 (Page 3), '...'" ). Do not include the path to the file. 
                 Formatting and Organization
                 Use headers and bullet points to organize the content clearly.
                 Ensure the entire response is well-structured and easy to navigate, providing a comprehensive overview and detailed breakdown of the {question} category within the contract.
