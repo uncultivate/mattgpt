@@ -161,9 +161,9 @@ class ChatPDF:
                  | self.model
                  | StrOutputParser())
         
-        if len(self.retriever) == 0:
-            logging.info('No relevant context found.')
-            return False
+        st.session_state.retriever = self.retriever
+        logging.info('No relevant context found.')
+            
         
         logging.info('Relevant context found.')
         return chain.invoke(query)
