@@ -22,11 +22,6 @@ __import__('pysqlite3')
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-#GROQ_API_KEY= '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'
-
-#chat = ChatGroq(temperature=0, groq_api_key="YOUR_API_KEY", model_name="mixtral-8x7b-32768")
-
-
 # Configure basic logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -42,7 +37,7 @@ class ChatPDF:
 
     def __init__(self):
         # self.model = ChatOllama(model="mistral")
-        self.model = ChatGroq(temperature=0.5, groq_api_key=GROQ_API_KEY, model_name="mixtral-8x7b-32768")
+        self.model = ChatGroq(temperature=0.5, groq_api_key=st.secrets["GROQ_API_KEY"], model_name="mixtral-8x7b-32768")
 
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
         self.prompts = {
