@@ -53,8 +53,11 @@ class ChatPDF:
             "category_search": PromptTemplate.from_template(
                 """
                 <s> [INST] You are an assistant for document review tasks, specialising in contracts. Use the following retrieved context
-                to provide a response. If there is no provided context, just say so and do not provide any further information or summary material, just end the response.
-                If there is provided context, then concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting: [/INST] </s>
+                to provide a response. [/INST]</s>
+                [INST] Context: {context}[/INST]
+                [INST]
+                If there is no provided context, just say so and do not provide any further information or summary material, just end the response.
+                If there is provided context, then concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting: [/INST] 
 
                 [INST]Summary of {question} Category
                 Begin with a Summary section focused on the {question} category. Provide an accurate summary of the key points and objectives covered under this category, including the significance of these elements to the overall contract.
@@ -71,8 +74,8 @@ class ChatPDF:
                 Formatting and Organization
                 Use headers and bullet points to organize the content clearly.
                 Ensure the entire response is well-structured and easy to navigate, providing a comprehensive overview and detailed breakdown of the {question} category within the contract.
-                This refined approach will enable a thorough and focused analysis of the specified category, aiding in the understanding of its terms, implications, and relevance to the contract as a whole.
-                Context: {context}[/INST]
+                This refined approach will enable a thorough and focused analysis of the specified category, aiding in the understanding of its terms, implications, and relevance to the contract as a whole.[/INST]
+                
                 """
             ),
         }
@@ -157,6 +160,8 @@ class ChatPDF:
                  | prompt
                  | self.model
                  | StrOutputParser())
+        
+        st.write(len(self.retriever))
 
         return chain.invoke(query)
 
