@@ -161,8 +161,11 @@ class ChatPDF:
                  | self.model
                  | StrOutputParser())
         
-        st.write(len(self.retriever))
-
+        if len(self.retriever) == 0:
+            logging.info('No relevant context found.')
+            return False
+        
+        logging.info('Relevant context found.')
         return chain.invoke(query)
 
     def clear(self):
