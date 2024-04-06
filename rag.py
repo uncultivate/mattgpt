@@ -122,13 +122,21 @@ class ChatPDF:
                     search_kwargs={"k": 3, "score_threshold": 0.5},
                 )
 
-                # Since the prompt templates are now dynamic, ensure chains are set up correctly here
+                # Since the prompt templates are dynamic, ensure chains are set up correctly here
                 self.setup_chains()
             except Exception as e:
                 logging.error(f"Failed to setup retriever or processing chains: {e}")
 
         
-
+    def check_context(self, context, question):
+        """
+        Check if the context is sufficient to proceed. If not, return a message indicating no relevant context found.
+        This function expects the context and question, and returns either the original input as a dictionary
+        if the context is sufficient, or a dictionary with a special 'no_context' flag set if not.
+        """
+        if not context or context.strip() == "":
+            return {"context": "No relevant context found.", "question": question, "no_context": True}
+        return {"context": context, "question": question, "no_context": False}
 
     def setup_chains(self):
         # This method assumes that prompt templates and the model are already defined
@@ -151,6 +159,13 @@ class ChatPDF:
             return "Please add a PDF document first."
         if query_type not in self.prompts:
             return "Invalid query type."
+        
+         # Retrieve context based on the query
+        retrieved_context = self.retriever.retrieve(query)  # Assuming retrieve() method returns the context directly
+
+        # Check if the retrieved context is sufficient
+        if not retrieved_context or retrieved_context.strip() == "":
+            return "No relevant context found."
 
         logging.info(f'Processing {query_type} query: {query}')
 
@@ -160,10 +175,6 @@ class ChatPDF:
                  | prompt
                  | self.model
                  | StrOutputParser())
-        
-        st.session_state.retriever.append(self.retriever)
-        logging.info('No relevant context found.')
-            
         
         logging.info('Relevant context found.')
         return chain.invoke(query)
