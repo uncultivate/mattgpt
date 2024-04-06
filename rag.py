@@ -161,7 +161,7 @@ class ChatPDF:
                  | self.model
                  | StrOutputParser())
         
-        st.session_state.retriever = self.retriever
+        st.session_state.retriever.append(self.retriever)
         logging.info('No relevant context found.')
             
         

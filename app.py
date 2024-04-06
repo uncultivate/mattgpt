@@ -17,7 +17,7 @@ st.set_page_config(page_title="CQ")
 if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "qa" 
 if 'retriever' not in st.session_state:
-    st.session_state['retriever'] = "None Yet!" 
+    st.session_state['retriever'] = ["None Yet!"] 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = {}
 
