@@ -128,16 +128,6 @@ class ChatPDF:
                 logging.error(f"Failed to setup retriever or processing chains: {e}")
 
         
-    def check_context(self, context, question):
-        """
-        Check if the context is sufficient to proceed. If not, return a message indicating no relevant context found.
-        This function expects the context and question, and returns either the original input as a dictionary
-        if the context is sufficient, or a dictionary with a special 'no_context' flag set if not.
-        """
-        if not context or context.strip() == "":
-            return {"context": "No relevant context found.", "question": question, "no_context": True}
-        return {"context": context, "question": question, "no_context": False}
-
     def setup_chains(self):
         # This method assumes that prompt templates and the model are already defined
         self.chain = {
@@ -161,7 +151,10 @@ class ChatPDF:
             return "Invalid query type."
         
          # Retrieve context based on the query
-        retrieved_context = self.retriever.retrieve(query)  # Assuming retrieve() method returns the context directly
+        #retriever.get_relevant_documents(query)[0]
+
+
+        retrieved_context = self.retriever.get_relevant_documents(query)  # Assuming retrieve() method returns the context directly
 
         # Check if the retrieved context is sufficient
         if not retrieved_context or retrieved_context.strip() == "":
