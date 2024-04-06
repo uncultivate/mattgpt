@@ -105,7 +105,6 @@ def page():
     # Upload document section
     st.subheader("Upload a document")
     st.file_uploader("Upload document", type=["pdf"], key="file_uploader", on_change=read_and_save_file, label_visibility="collapsed", accept_multiple_files=True)
-    st.write(st.session_state.retriver)
     # Version and reset
     st.sidebar.image('cq.webp', width=150)
     st.sidebar.subheader('Version: 0.12')
@@ -150,6 +149,7 @@ def page():
                                 on_change=process_input,
                                 args=("category_search",))
 
+    st.write(st.session_state.retriver)
 
 
 if __name__ == "__main__":
