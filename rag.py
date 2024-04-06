@@ -154,9 +154,9 @@ class ChatPDF:
         retrieved_context = self.retriever.get_relevant_documents(query)  # Assuming retrieve() method returns the context directly
 
         # Check if the retrieved context is sufficient
-        # if not retrieved_context:
-        #     logging.info(f'No relevant context found for {query_type} query: {query}')
-        #     return not_found
+        if not retrieved_context:
+            logging.info(f'No relevant context found for {query_type} query: {query}')
+            return not_found
 
         prompt = self.prompts[query_type]
 
