@@ -2,7 +2,7 @@
 import os
 import tempfile
 import logging
-import shutil
+from responses import *
 import streamlit as st
 from streamlit_chat import message
 from langchain_core.prompts import ChatPromptTemplate
@@ -156,7 +156,7 @@ class ChatPDF:
         # Check if the retrieved context is sufficient
         if not retrieved_context:
             logging.info(f'No relevant context found for {query_type} query: {query}')
-            return "No relevant context found."
+            return not_found
 
         prompt = self.prompts[query_type]
 
@@ -165,7 +165,7 @@ class ChatPDF:
                  | self.model
                  | StrOutputParser())
         
-        logging.info('Relevant context found.')
+        logging.info(found)
         return chain.invoke(query)
 
     def clear(self):

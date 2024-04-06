@@ -1,6 +1,7 @@
 import os
 import tempfile
 import logging
+from responses import *
 
 import streamlit as st
 from streamlit_chat import message
@@ -49,7 +50,6 @@ def process_input(tab_identifier):
         with st.spinner(f"Thinking..."):
             try:
                 # Call the 'ask' method with the user input and tab_identifier as the query type
-                logging.info(f'Related information found. Formulating Response.')
                 agent_text = st.session_state["assistant"].ask(user_input, tab_identifier)
 
                 # Append both user input and response to the messages list for the current tab
@@ -58,8 +58,8 @@ def process_input(tab_identifier):
                 
             except ValueError:
                 messages.append((user_input, True))  # True indicating user's message
-                messages.append(("No relevant information found.", False))  # False indicating system's response
-                logging.warning(f'No relevant information found.')
+                messages.append((not_found, False))  # False indicating system's response
+                logging.warning(not_found)
 
         # Update the session state with the new messages
         st.session_state["messages"][tab_identifier] = messages
