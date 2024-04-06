@@ -16,8 +16,6 @@ st.set_page_config(page_title="CQ")
 
 if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "qa" 
-if 'retriever' not in st.session_state:
-    st.session_state['retriever'] = ["None Yet!"] 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = {}
 
@@ -148,9 +146,6 @@ def page():
                                 key="user_input_category_search",
                                 on_change=process_input,
                                 args=("category_search",))
-
-    st.write(st.session_state.retriever)
-
 
 if __name__ == "__main__":
     page()

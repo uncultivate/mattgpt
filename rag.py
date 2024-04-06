@@ -150,17 +150,13 @@ class ChatPDF:
         if query_type not in self.prompts:
             return "Invalid query type."
         
-         # Retrieve context based on the query
-        #retriever.get_relevant_documents(query)[0]
-
-
+        # Retrieve context based on the query
         retrieved_context = self.retriever.get_relevant_documents(query)  # Assuming retrieve() method returns the context directly
 
         # Check if the retrieved context is sufficient
-        if not retrieved_context or retrieved_context.strip() == "":
+        if not retrieved_context:
+            logging.info(f'No relevant context found for {query_type} query: {query}')
             return "No relevant context found."
-
-        logging.info(f'Processing {query_type} query: {query}')
 
         prompt = self.prompts[query_type]
 
