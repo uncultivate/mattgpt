@@ -79,10 +79,10 @@ class ChatPDF:
                 """
             ),
         }
-        logging.info('ChatPDF class created.')
+        logging.info('CQ class created.')
 
 
-    def ingest(self, pdf_file_path: str):
+    def ingest(self, pdf_file_path: str, k):
         # Load PDF documents
         try:
             docs = PyPDFLoader(file_path=pdf_file_path).load()
@@ -119,7 +119,7 @@ class ChatPDF:
             try:
                 self.retriever = self.vector_store.as_retriever(
                     search_type="similarity_score_threshold",
-                    search_kwargs={"k": 3, "score_threshold": 0.5},
+                    search_kwargs={"k": k, "score_threshold": 0.5},
                 )
 
                 # Since the prompt templates are dynamic, ensure chains are set up correctly here

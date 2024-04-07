@@ -19,6 +19,8 @@ if 'active_tab' not in st.session_state:
     st.session_state['active_tab'] = "qa" 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = {}
+if 'pdf_count' not in st.session_state:
+    st.session_state.pdf_count = 0  # Initialize count in session state
 
 def reset_application():
     # Clear the ChatPDF instance
@@ -82,9 +84,13 @@ def read_and_save_file():
             file_path = tf.name
 
         with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file.name}"):
-            st.session_state["assistant"].ingest(file_path)
+            st.session_state.pdf_count += 1
+            st.session_state["assistant"].ingest(file_path, st.session_state.pdf_count)
+            
+
         os.remove(file_path)
         logging.info(f'File {file.name} uploaded.')
+
 
 
 def page():
@@ -108,8 +114,9 @@ def page():
     st.sidebar.subheader('Version: 0.12')
     if st.sidebar.button("Clear Chat"):
         reset_application()
+    st.write(f"Total PDFs uploaded: {st.session_state.pdf_count}")
 
-   # Assuming tab_mapping is defined as:
+    # Assuming tab_mapping is defined as:
     tab_mapping = {
         "qa": "Q & A",
         "category_search": "Category Search",
