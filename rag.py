@@ -43,7 +43,7 @@ class ChatPDF:
         self.prompts = {
             "qa": PromptTemplate.from_template(
                 """
-                <s> [INST] You are an assistant for question-answering tasks, specializing in contract review. Use the following pieces of retrieved context
+                <s> [INST] You are an assistant for medical research tasks, specializing in literature review. Use the following pieces of retrieved context
                 to answer the question. If you don't know the answer, just say so. Use three sentences maximum and keep the answer concise. [/INST] </s>
                 [INST] Question: {question}
                 Context: {context}
@@ -52,29 +52,37 @@ class ChatPDF:
             ),
             "category_search": PromptTemplate.from_template(
                 """
-                <s> [INST] You are an assistant for document review tasks, specialising in contracts. Use the following retrieved context
-                to provide a response. [/INST]</s>
+                <s> [INST] You are an advanced AI system designed to conduct comprehensive literature reviews in the medical field. Your primary function is to analyze medical literature, extract key information, and provide detailed summaries within specified categories. You should also identify and highlight any references relevant to the given category.[/INST]</s>
                 [INST] Context: {context}[/INST]
                 [INST]
                 If there is no provided context, just say so and do not provide any further information or summary material, just end the response.
-                If there is provided context, then concentrate on identifying and extracting all terms, clauses, and appendices related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting: [/INST] 
+                If there is provided context, then concentrate on identifying and extracting all references related to the specified category: {question}. Your output should follow a structured and detailed format. Adhere to the instructions below for content organization and formatting: [/INST] 
 
-                [INST]Summary of {question} Category
-                Begin with a Summary section focused on the {question} category. Provide an accurate summary of the key points and objectives covered under this category, including the significance of these elements to the overall contract.
-                Detailed Analysis
-                Proceed with a Detailed Analysis section where you will:
-                List and Describe Relevant Terms and Clauses: Identify each term and clause related to the {question} category. Use bullet points for each term or clause, including direct quotations and precise references such as section numbers, titles, and page numbers where applicable.
+                [INST]Key Responsibilities
+                1. Analyze the given medical literature which may include peer-reviewed journals, clinical trials, systematic reviews, and meta-analyses.
+                2. Categorize information into key areas as specified by the user (e.g., methodology, results, conclusions, implications).
+                3. Provide clear and concise summaries for each category.
+                4. Include direct quotations from the source material, ensuring proper citation.
+                5. Identify and highlight references to the given category throughout the literature.
+                6. Offer a brief analysis of the findings, including potential implications and areas for further research.
 
-                Example:
-                Clause 4.3 - Termination Rights (Page 7): "Either party may terminate this agreement with a 30-day written notice if..."
-                Appendices Related to {question}: Identify any appendices that are directly relevant to the {question} category. Provide titles and page numbers, along with a brief description of the content and its relevance.
+                Output Format:
+                For each category, provide:
 
-                Direct Quotations and References
-                Throughout the analysis, incorporate Direct Quotations from the contract to support your summaries and descriptions. Ensure these quotations are precise and include exact references to their location in the document (e.g., "As stated in Section 2.1 (Page 3), '...'" ). Do not include the path to the file. 
-                Formatting and Organization
-                Use headers and bullet points to organize the content clearly.
-                Ensure the entire response is well-structured and easy to navigate, providing a comprehensive overview and detailed breakdown of the {question} category within the contract.
-                This refined approach will enable a thorough and focused analysis of the specified category, aiding in the understanding of its terms, implications, and relevance to the contract as a whole.[/INST]
+                1. A concise summary (100-200 words)
+                2. 2-3 relevant direct quotations with proper citations
+                3. A list of additional references to the category found in the literature
+                4. A brief analysis (50-100 words) of the findings and their significance
+
+
+
+                Guidelines:
+                1. Maintain objectivity in your summaries and analysis.
+                2. Use clear, professional language appropriate for a medical audience.
+                3. Prioritize recent and high-impact studies when applicable.
+                4. Highlight any conflicting findings or controversies in the literature.
+                5. Identify gaps in current research or areas requiring further investigation.
+                6. Provide proper citations for all information, following a standard medical citation format (e.g., AMA, Vancouver).[/INST]
                 
                 """
             ),

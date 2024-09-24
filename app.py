@@ -104,7 +104,7 @@ def page():
     if "active_tab" not in st.session_state:
         st.session_state["active_tab"] = "qa"  # Default to the Q & A tab
 
-    st.header("Contract Query")
+    st.header("Literature Review AI")
 
     # Upload document section
     st.subheader("Upload a document")
@@ -139,7 +139,7 @@ def page():
                 # Q & A specific content
                 display_messages("qa")
                 st.session_state["ingestion_spinner"] = st.empty()
-                st.text_input("Ask questions relating to the contract",
+                st.text_input("Ask questions relating to the paper",
                                 key="user_input_qa",
                                 on_change=process_input,
                                 args=("qa",))
@@ -149,7 +149,7 @@ def page():
                 # Category Search specific content
                 display_messages("category_search")
                 st.session_state["ingestion_spinner"] = st.empty()
-                st.text_input("Enter a category within the contract to find relevant terms and clauses",
+                st.text_input("Enter a category or term within the paper to find relevant material & references",
                                 key="user_input_category_search",
                                 on_change=process_input,
                                 args=("category_search",))
