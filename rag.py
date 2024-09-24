@@ -1,45 +1,42 @@
-# Import necessary libraries
 import os
-import tempfile
 import logging
-from responses import *
+from typing import List, Optional
 import streamlit as st
-from streamlit_chat import message
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
-from langchain_community.chat_models import ChatOllama
 from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain.schema.output_parser import StrOutputParser
-from langchain_community.document_loaders.pdf import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.prompts import PromptTemplate
 from langchain_community.vectorstores.utils import filter_complex_metadata
-from langchain.retrievers.document_compressors import EmbeddingsFilter
-from langchain.retrievers import ContextualCompressionRetriever
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-# Configure basic logging
+# Attempt to use pysqlite3, fall back to sqlite3 if not available
+import sys
+try:
+    import pysqlite3
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    import sqlite3
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-# Define the ChatPDF class
-
 class ChatPDF:
-    vector_store = None
-    retriever = None
-    chain1 = None
-    chain2 = None
-
     def __init__(self):
-        # self.model = ChatOllama(model="mistral")
-        self.model = ChatGroq(temperature=0.5, groq_api_key=st.secrets["GROQ_API_KEY"], model_name="mixtral-8x7b-32768")
-
+        self.model = ChatGroq(temperature=0.5, 
+                              groq_api_key=st.secrets["GROQ_API_KEY"], 
+                              model_name="mixtral-8x7b-32768")
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
+        self.vector_store: Optional[Chroma] = None
+        self.retriever = None
+        self.chain = None
+        self.setup_prompts()
+
+    def setup_prompts(self):
         self.prompts = {
             "qa": PromptTemplate.from_template(
                 """
@@ -74,8 +71,6 @@ class ChatPDF:
                 3. A list of additional references to the category found in the literature
                 4. A brief analysis (50-100 words) of the findings and their significance
 
-
-
                 Guidelines:
                 1. Maintain objectivity in your summaries and analysis.
                 2. Use clear, professional language appropriate for a medical audience.
@@ -83,101 +78,59 @@ class ChatPDF:
                 4. Highlight any conflicting findings or controversies in the literature.
                 5. Identify gaps in current research or areas requiring further investigation.
                 6. Provide proper citations for all information, following a standard medical citation format (e.g., AMA, Vancouver).[/INST]
-                
                 """
             ),
         }
-        logging.info('CQ class created.')
 
-
-    def ingest(self, pdf_file_path: str, k):
-        # Load PDF documents
+    def ingest(self, pdf_file_path: str, k: int):
         try:
             docs = PyPDFLoader(file_path=pdf_file_path).load()
-        except Exception as e:
-            logging.error(f"Failed to load PDF document: {e}")
-            return
-
-        # Split documents into manageable chunks
-        try:
             chunks = self.text_splitter.split_documents(docs)
             chunks = filter_complex_metadata(chunks)
-        except Exception as e:
-            logging.error(f"Error during document splitting: {e}")
-            return
 
-        # Initialize or update the vector store with new documents
-        if self.vector_store is None:
-            try:
+            if self.vector_store is None:
                 self.vector_store = Chroma.from_documents(documents=chunks, embedding=FastEmbedEmbeddings())
-            except Exception as e:
-                logging.error(f"Failed to initialize vector store: {e}")
-                return
-        else:
-            try:
+            else:
                 self.vector_store.add_documents(documents=chunks)
-                
-            except Exception as e:
-                logging.error(f"Failed to add documents to vector store: {e}")
-                return
 
-        # Setup retriever and processing chains if not already done
-        if self.retriever is None:
+            self.setup_retriever(k)
+            self.setup_chains()
+            logging.info(f'Document ingested successfully: {pdf_file_path}')
+        except Exception as e:
+            logging.error(f"Error ingesting document: {e}")
+            raise
 
-            try:
-                self.retriever = self.vector_store.as_retriever(
-                    search_type="similarity_score_threshold",
-                    search_kwargs={"k": k, "score_threshold": 0.5},
-                )
+    def setup_retriever(self, k: int):
+        self.retriever = self.vector_store.as_retriever(
+            search_type="similarity_score_threshold",
+            search_kwargs={"k": k, "score_threshold": 0.5},
+        )
 
-                # Since the prompt templates are dynamic, ensure chains are set up correctly here
-                self.setup_chains()
-            except Exception as e:
-                logging.error(f"Failed to setup retriever or processing chains: {e}")
-
-        
     def setup_chains(self):
-        # This method assumes that prompt templates and the model are already defined
         self.chain = {
-            "qa": ({"context": self.retriever, "question": RunnablePassthrough()}
-                   | self.prompts["qa"]
-                   | self.model
-                   | StrOutputParser()),
-            "category_search": ({"context": self.retriever, "question": RunnablePassthrough()}
-                                | self.prompts["category_search"]
-                                | self.model
-                                | StrOutputParser()),
+            query_type: (
+                {"context": self.retriever, "question": RunnablePassthrough()}
+                | self.prompts[query_type]
+                | self.model
+                | StrOutputParser()
+            )
+            for query_type in self.prompts
         }
         logging.info('Processing chains set up successfully.')
 
-    
-
-    def ask(self, query: str, query_type: str):
+    def ask(self, query: str, query_type: str) -> str:
         if not self.vector_store or not self.retriever:
-            return "Please add a PDF document first."
+            raise ValueError("Please add a PDF document first.")
         if query_type not in self.prompts:
-            return "Invalid query type."
-        
-        # Retrieve context based on the query
-        retrieved_context = self.retriever.get_relevant_documents(query)  # Assuming retrieve() method returns the context directly
+            raise ValueError("Invalid query type.")
 
-        # Check if the retrieved context is sufficient
+        retrieved_context = self.retriever.get_relevant_documents(query)
         if not retrieved_context:
-            logging.info(f'No relevant context found for {query_type} query: {query}')
-            return not_found
+            raise ValueError(f'No relevant context found for {query_type} query: {query}')
 
-        prompt = self.prompts[query_type]
-
-        chain = ({"context": self.retriever, "question": RunnablePassthrough()}
-                 | prompt
-                 | self.model
-                 | StrOutputParser())
-        
-        logging.info(found)
-        return chain.invoke(query)
+        return self.chain[query_type].invoke(query)
 
     def clear(self):
-        # Reset the vector store, retriever, and processing chains
         self.vector_store = None
         self.retriever = None
         self.chain = None
